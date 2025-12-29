@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique - Produits Premium</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="brand">Boutique Premium</h1>
+                <nav>
+                    <a href="/" class="nav-link active">Produits</a>
+                    <a href="/admin" class="nav-link admin-link">Admin</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="hero">
+                <h2 class="hero-title">Découvrez nos produits</h2>
+                <p class="hero-subtitle">Une sélection soigneusement choisie pour vous</p>
+            </section>
+
+            <div id="products-grid" class="products-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Chargement des produits...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 Boutique Premium. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

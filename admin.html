@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Boutique</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-container {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .user-email {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-cms {
+            background: #28a745;
+        }
+
+        .btn-cms:hover {
+            background: #218838;
+        }
+
+        .loading {
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            color: #dc3545;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8d7da;
+            border-radius: 6px;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 2rem 0;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>🔐 Administration</h1>
+        
+        <div id="auth-content">
+            <p class="loading">Vérification de l'authentification...</p>
+        </div>
+    </div>
+
+    <script>
+        const authContent = document.getElementById('auth-content');
+        
+        // Check authentication status
+        function checkAuth() {
+            const user = netlifyIdentity.currentUser();
+            
+            if (user) {
+                showAdminPanel(user);
+            } else {
+                showLoginPrompt();
+            }
+        }
+
+        function showAdminPanel(user) {
+            authContent.innerHTML = `
+                <div class="user-info">
+                    <p style="color: #666; margin-bottom: 0.5rem;">Connecté en tant que</p>
+                    <p class="user-email">${user.email}</p>
+                </div>
+
+                <div class="info-box">
+                    <h3>📝 Gérer les produits</h3>
+                    <p>Utilisez le CMS pour ajouter, modifier ou supprimer des produits. Chaque modification déclenchera automatiquement un nouveau déploiement.</p>
+                </div>
+
+                <a href="/admin/cms/" class="btn btn-cms">Ouvrir le CMS</a>
+                <a href="/" class="btn btn-secondary">Retour au site</a>
+                <button onclick="logout()" class="btn btn-secondary">Déconnexion</button>
+            `;
+        }
+
+        function showLoginPrompt() {
+            authContent.innerHTML = `
+                <p style="color: #666; margin-bottom: 2rem;">
+                    Vous devez être connecté pour accéder à l'administration.
+                </p>
+                <button onclick="login()" class="btn">Se connecter</button>
+                <a href="/" class="btn btn-secondary">Retour au site</a>
+            `;
+        }
+
+        function login() {
+            netlifyIdentity.open('login');
+        }
+
+        function logout() {
+            netlifyIdentity.logout();
+        }
+
+        // Event listeners
+        netlifyIdentity.on('init', checkAuth);
+        netlifyIdentity.on('login', checkAuth);
+        netlifyIdentity.on('logout', () => {
+            window.location.href = '/';
+        });
+
+        // Initialize
+        netlifyIdentity.init();
+    </script>
+</body>
+</html>
