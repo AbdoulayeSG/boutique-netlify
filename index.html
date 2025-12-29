@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boutique - Produits Premium</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
 </head>
+
 <body>
     <header class="site-header">
         <div class="container">
@@ -42,6 +43,105 @@
         </div>
     </footer>
 
-    <script src="app.js"></script>
+<script>
+// Charger et afficher les produits depuis localStorage
+async function loadProducts() {
+    const grid = document.getElementById('products-grid');
+    
+    try {
+        // Charger depuis localStorage (même clé que le CMS)
+        const saved = localStorage.getItem('boutique_products');
+        let products = [];
+        
+        if (saved) {
+            products = JSON.parse(saved);
+        } else {
+            // Produits par défaut si vide
+            products = [
+                {
+                    name: "Montre Élégance",
+                    price: 299.99,
+                    description: "Montre classique en acier inoxydable avec mouvement à quartz. Design intemporel et élégant.",
+                    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop"
+                },
+                {
+                    name: "Sac à Main Premium",
+                    price: 189.00,
+                    description: "Sac en cuir véritable avec finitions soignées. Parfait pour un usage quotidien.",
+                    image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400&h=300&fit=crop"
+                },
+                {
+                    name: "Lunettes de Soleil",
+                    price: 129.50,
+                    description: "Protection UV400 avec monture moderne et verres polarisés pour un confort optimal.",
+                    image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop"
+                }
+            ];
+            // Sauvegarder les produits par défaut
+            localStorage.setItem('boutique_products', JSON.stringify(products));
+        }
+        
+        if (products.length === 0) {
+            grid.innerHTML = `
+                <div class="loading">
+                    <p>Aucun produit disponible pour le moment.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Clear loading state
+        grid.innerHTML = '';
+        
+        // Create product cards
+        products.forEach(product => {
+            const card = createProductCard(product);
+            grid.appendChild(card);
+        });
+        
+    } catch (error) {
+        console.error('Erreur de chargement:', error);
+        grid.innerHTML = `
+            <div class="loading">
+                <p>Erreur lors du chargement des produits.</p>
+            </div>
+        `;
+    }
+}
+
+function createProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    
+    const imageUrl = product.image || 'https://via.placeholder.com/400x300?text=Produit';
+    const price = typeof product.price === 'number' 
+        ? product.price.toFixed(2) 
+        : parseFloat(product.price).toFixed(2);
+    
+    card.innerHTML = `
+        <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/400x300?text=Image+non+disponible'">
+        <div class="product-info">
+            <h3 class="product-name">${product.name}</h3>
+            <p class="product-price">${price} €</p>
+            <p class="product-description">${product.description || ''}</p>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Rafraîchir automatiquement quand les produits changent
+window.addEventListener('storage', function(e) {
+    if (e.key === 'boutique_products') {
+        loadProducts();
+    }
+});
+
+// Charger au démarrage
+document.addEventListener('DOMContentLoaded', loadProducts);
+
+// Rafraîchir toutes les 2 secondes pour détecter les changements
+setInterval(loadProducts, 2000);
+</script>
 </body>
 </html>
