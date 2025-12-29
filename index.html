@@ -37,13 +37,46 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2025 Boutique Premium. Tous droits réservés.</p>
+ <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p>📍 63rue Felix-Faure<br>Dakar plateau,Dakar</p>
+                <p>📞 +221 78 131 82 77</p>
+                <p>✉️ info@elegancecouture.fr</p>
+            </div>
+            <div class="footer-section">
+                <h4>Service Client</h4>
+                <a href="#">FAQ</a>
+                <a href="#">Livraison & Retours</a>
+                <a href="#">Conditions Générales</a>
+                <a href="#">Politique de Confidentialité</a>
+            </div>
+            <div class="footer-section">
+                <h4>Entreprise</h4>
+                <a href="#">À Propos</a>
+                <a href="#">Carrières</a>
+                <a href="#">Blog</a>
+                <a href="#">Presse</a>
+            </div>
+            <div class="footer-section">
+                <h4>Suivez-Nous</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Pinterest</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; By Portgas </p>
         </div>
     </footer>
 
 <script>
+// CONFIGURATION - À MODIFIER
+const WHATSAPP_NUMBER = "221770368599"; // Remplace par ton numéro WhatsApp (format international sans +)
+const TAUX_CONVERSION = 655.957; // 1 EUR = 655.957 FCFA (taux fixe)
+
 // Charger et afficher les produits depuis localStorage
 async function loadProducts() {
     const grid = document.getElementById('products-grid');
@@ -114,20 +147,28 @@ function createProductCard(product) {
     card.className = 'product-card';
     
     const imageUrl = product.image || 'https://via.placeholder.com/400x300?text=Produit';
-    const price = typeof product.price === 'number' 
-        ? product.price.toFixed(2) 
-        : parseFloat(product.price).toFixed(2);
+    const priceEur = typeof product.price === 'number' ? product.price : parseFloat(product.price);
+    const priceFcfa = Math.round(priceEur * TAUX_CONVERSION);
     
     card.innerHTML = `
         <img src="${imageUrl}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/400x300?text=Image+non+disponible'">
         <div class="product-info">
             <h3 class="product-name">${product.name}</h3>
-            <p class="product-price">${price} €</p>
+            <p class="product-price">${priceFcfa.toLocaleString('fr-FR')} FCFA</p>
             <p class="product-description">${product.description || ''}</p>
+            <button class="btn-cart" onclick="orderOnWhatsApp('${product.name.replace(/'/g, "\\'")}', ${priceFcfa})">
+                🛒 Commander sur WhatsApp
+            </button>
         </div>
     `;
     
     return card;
+}
+
+function orderOnWhatsApp(productName, price) {
+    const message = `Bonjour ! Je suis intéressé(e) par :\n\n📦 *${productName}*\n💰 Prix : ${price.toLocaleString('fr-FR')} FCFA\n\nJe voudrais passer commande.`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
 }
 
 // Rafraîchir automatiquement quand les produits changent
@@ -139,9 +180,6 @@ window.addEventListener('storage', function(e) {
 
 // Charger au démarrage
 document.addEventListener('DOMContentLoaded', loadProducts);
-
-// Rafraîchir toutes les 2 secondes pour détecter les changements
-setInterval(loadProducts, 2000);
 </script>
 </body>
 </html>
